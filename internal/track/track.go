@@ -16,13 +16,13 @@ func (t TrackerFunc) Movement(from, to string) {
 	t(from, to)
 }
 
-// MovementHandler represents a handler for tracking
+// TrackerHandler represents a handler for tracking
 // actions of tings
-type MovementHandler struct {
+type TrackerHandler struct {
 	Action string
 }
 
-func (m MovementHandler) Movement(from, to string) {
+func (m TrackerHandler) Movement(from, to string) {
 	fmt.Printf("%s from %s to %s\n", m.Action, from, to)
 }
 
