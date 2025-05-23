@@ -95,3 +95,42 @@ func TestParseCSV(t *testing.T) {
 		})
 	}
 }
+
+func TestCountLine(t *testing.T) {
+	testcases := []struct {
+		name     string
+		input    []byte
+		expected uint
+	}{
+		{
+			name: "correct count",
+			input: []byte(`field1,field2,field3
+1,1,1
+2,3,1
+4,1,1`),
+			expected: uint(4),
+		},
+		{
+			name: "missing header",
+			input: []byte(`
+1,2,3
+1,2,3			
+`),
+			expected: uint(2),
+		},
+		{
+			name: "unbalanced row",
+			input: []byte(`field1,field2,field3
+1,3
+1,2,3`),
+			expected: uint(2),
+		},
+	}
+	for i, tc := range testcases {
+		t.Run(fmt.Sprintf("case %d-%s", i, tc.name), func(t *testing.T) {
+			r := bytes.NewReader(tc.input)
+			actual := CountLines(r)
+			assert.Equal(t, tc.expected, actual)
+		})
+	}
+}

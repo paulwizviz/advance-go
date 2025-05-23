@@ -63,3 +63,20 @@ func ParseCSV(ctx context.Context, r io.Reader) chan CSVRec {
 	}(c)
 	return c
 }
+
+func CountLines(r io.Reader) uint {
+	reader := csv.NewReader(r)
+	lc := uint(0)
+loop:
+	for {
+		_, err := reader.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break loop
+			}
+			continue
+		}
+		lc++
+	}
+	return lc
+}
