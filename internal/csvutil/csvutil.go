@@ -1,3 +1,8 @@
+// Package csvutil provides utility types and functions to simplify working with CSV data.
+//
+// This package includes:
+//   - A function to read a CSV file in a goroutine and channel data.
+//   - A function to help count number of lines in a CSV file
 package csvutil
 
 import (
