@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseCSV(t *testing.T) {
+func TestParseCSVC(t *testing.T) {
 	testcases := []struct {
 		name     string
 		input    []byte
@@ -86,12 +86,67 @@ func TestParseCSV(t *testing.T) {
 	for i, tc := range testcases {
 		t.Run(fmt.Sprintf("case %d %s", i, tc.name), func(t *testing.T) {
 			reader := bytes.NewReader(tc.input)
-			records := ParseCSV(context.TODO(), reader)
+			records := ParseCSVC(context.TODO(), reader)
 			for rec := range records {
 				if assert.True(t, errors.Is(rec.Err, tc.expected.Err), fmt.Sprintf("Case: %d Error: %v", i, rec.Err)) {
 					assert.Equal(t, tc.expected.CSVRec.Record, rec.Record, fmt.Sprintf("Case: %d Value", i))
 				}
 			}
+		})
+	}
+}
+
+func TestParseCSV(t *testing.T) {
+	testcases := []struct {
+		name        string
+		input       []byte
+		expected    []CSVRec
+		expectedErr error
+	}{
+		{
+			name: "properly formatted file",
+			input: []byte(`field1,field2,field3
+1,2,3
+4,5,6`),
+			expected: []CSVRec{
+				{
+					Line:   2,
+					Record: []string{"1", "2", "3"},
+					Err:    nil,
+				},
+				{
+					Line:   3,
+					Record: []string{"4", "5", "6"},
+					Err:    nil,
+				},
+			},
+		},
+		{
+			name: "properly formatted file",
+			input: []byte(`field1,field2
+1,2,3`),
+			expected: []CSVRec{
+				{
+					Line:   2,
+					Record: []string{"1", "2", "3"},
+				},
+			},
+			expectedErr: ErrCSVRec,
+		},
+	}
+
+	for i, tc := range testcases {
+		t.Run(fmt.Sprintf("case %d-%s", i, tc.name), func(t *testing.T) {
+			r := bytes.NewReader(tc.input)
+			actual := ParseCSV(context.TODO(), r)
+			if tc.expectedErr != nil {
+				for i, a := range actual {
+					assert.ErrorIs(t, a.Err, tc.expectedErr)
+					assert.Equal(t, tc.expected[i].Record, a.Record)
+				}
+				return
+			}
+			assert.Equal(t, tc.expected, actual)
 		})
 	}
 }

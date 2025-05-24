@@ -18,13 +18,16 @@ var (
 	ErrCSVRec = errors.New("invalid record")
 )
 
+// CSVRec represents a record in a CSV file
 type CSVRec struct {
 	Record []string
 	Line   uint
 	Err    error
 }
 
-func ParseCSV(ctx context.Context, r io.Reader) chan CSVRec {
+// ParseCSVC parse a CSV file in a Goroutine and returns a
+// csv record in a channel
+func ParseCSVC(ctx context.Context, r io.Reader) chan CSVRec {
 	c := make(chan CSVRec)
 	go func(ch chan CSVRec) {
 		defer close(ch)
@@ -67,6 +70,53 @@ func ParseCSV(ctx context.Context, r io.Reader) chan CSVRec {
 		}
 	}(c)
 	return c
+}
+
+// ParseCSV reads a file extract a record and aggregate them
+// in a slice
+func ParseCSV(ctx context.Context, r io.Reader) []CSVRec {
+	recs := []CSVRec{}
+	csvr := csv.NewReader(r)
+	ln := uint(1)
+	header, err := csvr.Read()
+	if err != nil {
+		rec := CSVRec{
+			Record: header,
+			Line:   ln,
+			Err:    fmt.Errorf("%w-%v", ErrCSV, err),
+		}
+		recs = append(recs, rec)
+		return recs
+	}
+loop:
+	for {
+		select {
+		case <-ctx.Done():
+			break loop
+		default:
+			ln++
+			r, err := csvr.Read()
+			if err != nil {
+				if errors.Is(err, io.EOF) {
+					break loop
+				}
+				rec := CSVRec{
+					Line:   ln,
+					Record: r,
+					Err:    fmt.Errorf("%w-%v", ErrCSVRec, err),
+				}
+				recs = append(recs, rec)
+				continue loop
+			}
+			rec := CSVRec{
+				Line:   ln,
+				Record: r,
+				Err:    nil,
+			}
+			recs = append(recs, rec)
+		}
+	}
+	return recs
 }
 
 func CountLines(r io.Reader) uint {
