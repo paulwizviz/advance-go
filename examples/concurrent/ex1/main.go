@@ -21,7 +21,7 @@ func main() {
 	}
 	defer f.Close()
 
-	data := csvutil.ParseCSV(context.TODO(), f)
+	data := csvutil.ParseCSVC(context.TODO(), f)
 	for d := range data {
 		fmt.Printf("Line No: %d Record: %v Error: %v\n", d.Line, d.Record, d.Err)
 	}
