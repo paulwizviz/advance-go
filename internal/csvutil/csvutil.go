@@ -25,8 +25,7 @@ type CSVRec struct {
 	Err    error
 }
 
-// ParseCSVC parse a CSV file in a Goroutine and returns a
-// csv record in a channel
+// ParseCSVC is gorountine producer for parsing csv file
 func ParseCSVC(ctx context.Context, r io.Reader) chan CSVRec {
 	c := make(chan CSVRec)
 	go func(ch chan CSVRec) {
