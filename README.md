@@ -1,10 +1,11 @@
-# Go Pattern: A Collection of Coding Patterns
+# Adanced Go Programming: A Collection of Advanced Coding Patterns
 
 This repository is a collection of Go coding patterns.
 
 ## Topics
 
 * [Single Method Interface](./docs/single-interface.md)
+* [Concurrency](./docs/concurrent.md)
 
 ## Disclaimers
 
