@@ -1,6 +1,6 @@
 # Adanced Go Programming: A Collection of Advanced Coding Patterns
 
-This repository is a collection of Go coding patterns.
+This repository is a collection of advanced Go coding patterns.
 
 ## Topics
 

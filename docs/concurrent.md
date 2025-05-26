@@ -22,16 +22,16 @@ Working examples:
 * [Main package](../examples/concurrent/ex1/main.go)
 * [Producer](../internal/csvutil/csvutil.go)
 
-## Fan Out and Worker Pool
+## Fan Out and Fan in
 
-A Fan Out pattern has these characteristics:
+The Fan-Out amd Fan-In Concurrency pattern in Go is a concurrent design pattern where a single job or input is fanned out (distributed) to multiple workers (goroutines), allowing tasks to be processed in parallel. This pattern is especially useful for increasing throughput and making full use of multi-core processors.
+
+Key characteristics:
 
 * Multiple Goroutines
 * A shared input channel
 * A shared output channel
 * Coordinated completion (via WaitGroup)
 * Aggregated result  
-
-A worker pool is used to support multiple processing Goroutines.
 
 Here is a [working example](../examples/concurrent/ex2/main.go)

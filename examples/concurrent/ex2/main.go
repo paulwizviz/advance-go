@@ -84,7 +84,9 @@ func main() {
 	jobs := csvutil.ParseCSVC(context.TODO(), f)
 	result := make(chan Data)
 
-	// This spins up 3 workers
+	// This spins up 3 workers to perform
+	// fan-out operations and the aggregated
+	// result demonstrates a fan-in pattern
 	var wg sync.WaitGroup
 	for range 3 {
 		wg.Add(1)
