@@ -4,8 +4,10 @@ This section describes techniques for using single method interfaces.
 
 ## Handler Patterns
 
-In this example, our goal is to implement ways of tracking movement of things for various action. When we track different actions, we would like the tracker to print messages that are appropriate for different actions.
+In this example, our goal is to implement a way to separate out sqlite database operations using single method interfaces from specific domain data types.
 
-For example, if we are tracking running actions, we would like the tracking message to say "Person ran from A to B". If we are tracking a driver, we would like the message to say "Person drove from A to B".
+First we have a package call `sqlops` that contains a collection of sql related interfaces. Refer to [this](../internal/sqlops/sqlops.go).
 
-Please refer to a working example [here](../examples/single-method/ex1/main.go).
+Second we have a package call `person` that contains a collection of data types related to person types. Refer to [this](../internal/person/person.go).
+
+Third we have the main package that ties all the packages together. Refer to [this](../examples/single-method/ex1/main.go)
