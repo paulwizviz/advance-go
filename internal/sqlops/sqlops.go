@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"reflect"
-	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -53,29 +51,22 @@ func CreateTable(ctx context.Context, db *sql.DB, creator TblCreator) error {
 	return nil
 }
 
-type StructTag struct {
-	FieldName string
-	Tag       string
+// TblWriter is an interface to write data to
+// an SQL database
+type TblWriter interface {
+	Write(db *sql.DB) (*sql.Stmt, []any, error)
 }
 
-// ExtractTags extract struct ExtractTags of direct fields
-// it will not extract ExtractTags from composed
-// fields
-func ExtractTags(tagName string, typ any) []StructTag {
-	ev := reflect.Indirect(reflect.ValueOf(typ))
-	tags := []StructTag{}
-	for i := 0; i < ev.Type().NumField(); i++ {
-		tag := StructTag{}
-		tag.FieldName = ev.Type().Field(i).Name
-		t := ev.Type().Field(i).Tag
-		tElems := strings.Split(string(t), " ")
-		for _, tElem := range tElems {
-			if strings.Contains(tElem, tagName) {
-				sElems := strings.Split(tElem, ":")
-				tag.Tag = sElems[1][1 : len(sElems[1])-1]
-			}
-		}
-		tags = append(tags, tag)
+func WriteTable(ctx context.Context, db *sql.DB, writer TblWriter) error {
+	stmt, args, err := writer.Write(db)
+	if err != nil {
+		return err
 	}
-	return tags
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, args)
+	if err != nil {
+		return err
+	}
+	return nil
 }

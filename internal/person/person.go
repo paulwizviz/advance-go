@@ -2,7 +2,7 @@ package person
 
 import (
 	"fmt"
-	"go-pattern/internal/sqlops"
+	"go-pattern/internal/structtag"
 	"strings"
 )
 
@@ -18,7 +18,7 @@ type NameIdentifier struct {
 // CreateStmt is a concrete implementation of sqlops.TblCreator
 // interface
 func (n NameIdentifier) CreateStmt() string {
-	tags := sqlops.ExtractTags("sqlite", n)
+	tags := structtag.ExtractPromoted("sqlite", n)
 	createStmt := "CREATE TABLE IF NOT EXISTS name_id ("
 	for _, t := range tags {
 		if strings.Contains(t.Tag, "pk") {
