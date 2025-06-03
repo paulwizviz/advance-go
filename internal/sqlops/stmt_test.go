@@ -11,7 +11,7 @@ type data struct {
 }
 
 var (
-	initDBFunc StmtWriterFunc = func(db *sql.DB) (*sql.Stmt, []any, error) {
+	initDBFunc StmtCreatorFunc = func(db *sql.DB) (*sql.Stmt, []any, error) {
 		stmt, err := db.Prepare(`INSERT INTO data (value) VALUES( ? )`)
 		if err != nil {
 			return nil, nil, err
